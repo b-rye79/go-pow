@@ -1,4 +1,4 @@
-package main
+package hashcash
 
 import (
 	"bytes"
@@ -11,14 +11,16 @@ import (
 	"time"
 )
 
-func getKey(len int) []byte {
+//GetKey Gets a random byte array of length len
+func GetKey(len int) []byte {
 	token := make([]byte, 4)
 	rand.Seed(time.Now().UTC().UnixNano())
 	rand.Read(token)
 	return token
 }
 
-func hash(message string, zeros int, key []byte) ([]byte, uint64) {
+//Hash Will hash a provided message with the key, incrementing a count until the hash has the desired zeros
+func Hash(message string, zeros int, key []byte) ([]byte, uint64) {
 	var cnt uint64
 	cnt, mac := 0, hmac.New(sha256.New, key)
 	mac.Write([]byte(message + ":" + string(cnt)))
@@ -36,7 +38,8 @@ func hash(message string, zeros int, key []byte) ([]byte, uint64) {
 	return sum, cnt
 }
 
-func validate(message string, cnt int, sum []byte, zeros int, key []byte) (valid bool, err string) {
+//Validate Checks to see is the hash has the correct zero bits and if the hash matches
+func Validate(message string, cnt int, sum []byte, zeros int, key []byte) (valid bool, err string) {
 	valid, mac := true, hmac.New(sha256.New, key)
 	if checkZeros(sum, zeros) == false {
 		valid = false

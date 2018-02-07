@@ -1,1 +1,1 @@
-# halvsies
+# hashcash
